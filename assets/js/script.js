@@ -42,7 +42,6 @@ function checkDateAndTime() {
     }
   } else {
     updateLocalStorage();
-    //clearTasks then clear and replace local storage to current date
   }
 }
 
@@ -64,4 +63,8 @@ clear local storage date value and make it the current date
 
 */
 
+//Checks time and date every hour, we call it once though so it loads probably when first opened
 checkDateAndTime();
+setInterval(function () {
+  checkDateAndTime();
+}, 3600000);
