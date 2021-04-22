@@ -1,48 +1,52 @@
-let currentDateObj = moment();
+//initalizing global variables
+var currentDateObj = moment();
 $("#currentDay").text(currentDateObj.format("dddd MMMM YYYY"));
 
-let schedule = {
+var schedule = {
   dateTime: currentDateObj.format("dddd MMMM YYYY"),
   task: {
-    9: "9am task",
-    10: "10am task",
-    11: "11am task",
-    12: "12pm task",
-    13: "1pm task",
-    14: "2pm task",
-    15: "3pm task",
-    16: "4pm task",
-    17: "5pm task",
+    9: "",
+    10: "",
+    11: "",
+    12: "",
+    13: "",
+    14: "",
+    15: "",
+    16: "",
+    17: "",
   },
 };
 
-//We only set it when schedule isnt created or it needs to be updated
-//localStorage.setItem("schedule", JSON.stringify(schedule));
-
+//when save button is clicked we send schedule to local storage
 $(".saveBtn").click(function () {
-  debugger;
-  buttonClickedId = $(this).parent().attr("id");
-  console.log(buttonClickedId);
+  //debugger;
+  let time = $(this).parent().attr("id");
+  let task = $("#" + time).children()[1].value;
 
-  //TODO: How to get the text of the textarea.
-  console.log($(this).parent().children()[1]);
+  time = parseInt(time.replace("hour-", ""));
+
+  schedule.task[time] = task;
+
+  updateLocalStorage();
 });
 
+//This updates local storage
 function updateLocalStorage() {
   localStorage.clear();
   localStorage.setItem("schedule", JSON.stringify(schedule));
 }
 
+//This updates checks local storage data with current date and updates UI
 function checkDateAndTime() {
-  let storedDate = JSON.parse(localStorage.getItem("schedule"));
+  localStorageSchedule = JSON.parse(localStorage.getItem("schedule"));
 
-  //There is nothing in local storage there for no schedule to get and check
-  if (!storedDate) {
+  if (!localStorageSchedule) {
     updateLocalStorage();
-    return;
+  } else {
+    schedule = localStorageSchedule;
   }
 
-  if (storedDate.dateTime == currentDateObj.format("dddd MMMM YYYY")) {
+  if (schedule.dateTime == currentDateObj.format("dddd MMMM YYYY")) {
     let presentHour = parseInt(currentDateObj.format("H"));
 
     for (i = 9; i <= 17; i++) {
@@ -53,6 +57,10 @@ function checkDateAndTime() {
       } else if (i > presentHour) {
         $("#hour-" + i).addClass("future");
       }
+
+      $("#hour-" + i)
+        .children()[1]
+        .append(schedule.task[i]);
     }
   } else {
     updateLocalStorage();
@@ -61,6 +69,7 @@ function checkDateAndTime() {
 
 //Checks time and date every hour, we call it once though so it loads probably when first opened
 checkDateAndTime();
+
 setInterval(function () {
   checkDateAndTime();
 }, 3600000);
