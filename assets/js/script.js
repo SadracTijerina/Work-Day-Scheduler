@@ -17,14 +17,28 @@ let schedule = {
 };
 
 //We only set it when schedule isnt created or it needs to be updated
-localStorage.setItem("schedule", JSON.stringify(schedule));
+//localStorage.setItem("schedule", JSON.stringify(schedule));
+
+$(".saveBtn").click(function () {
+  debugger;
+  buttonClickedId = $(this).parent().attr("id");
+  console.log(buttonClickedId);
+
+  //TODO: How to get the text of the textarea.
+  console.log($(this).parent().children()[1]);
+});
+
+function updateLocalStorage() {
+  localStorage.clear();
+  localStorage.setItem("schedule", JSON.stringify(schedule));
+}
 
 function checkDateAndTime() {
-  //debugger;
   let storedDate = JSON.parse(localStorage.getItem("schedule"));
 
   //There is nothing in local storage there for no schedule to get and check
   if (!storedDate) {
+    updateLocalStorage();
     return;
   }
 
@@ -44,24 +58,6 @@ function checkDateAndTime() {
     updateLocalStorage();
   }
 }
-
-function updateLocalStorage() {
-  localStorage.clear();
-  localStorage.setItem("schedule", JSON.stringify(schedule));
-}
-/*check state of current time function
-
-from local storage get the date that was previously saved and check if it 
-matches current date
-
-IF it does match current date then check what the current hour it is
-and run appropriate classes to row (past, present, future)
-
-
-IF it doesn't match current date then clear all the tasks (another function) and 
-clear local storage date value and make it the current date
-
-*/
 
 //Checks time and date every hour, we call it once though so it loads probably when first opened
 checkDateAndTime();
